@@ -185,23 +185,16 @@ def import_students(a):#导入名单
                 mingdan.append(line.rstrip())
     except:
         pass
+
+    abcd = "a" #默认名
     if len(mingdan) == 0:
         messagebox.showerror('警告','导入失败')
     else:
         NameList = mingdan
-        #root5 = Toplevel(Main)
-        # # 标签
-        # tk.Label(root5, text="请输入内容：").pack(pady=5)
-        # # 创建输入框
-        # entry = tk.Entry(root5, width=30, font=("Arial", 12), bg="#f0f0f0")
-        # entry.pack(pady=10)
-        #tk.Button(root5, text="提交", command=show_input, bg="#4CAF50", fg="white").pack()
-        abcd = "a"
         def show_input():
             global abcd
-            #text = entry.get()
-            text = "1"
-            if text and text in list_namelist:
+            text = entry.get()
+            if text or text in list_namelist:
                 abcd = text
                 with open(abcd, 'a') as file_object:
                     file_object.truncate(0)
@@ -220,36 +213,44 @@ def import_students(a):#导入名单
                         file_object.write(abcd)
                         list_namelist.append(abcd)
                 messagebox.showinfo('提示', '导入已完成！')
-                #os.system("attrib +h luckydog.txt")
-                #root5.destroy()
+                # os.system("attrib +h luckydog.txt")
+                # root5.destroy()
             else:
-                messagebox.showinfo("请输入内容！","请输入内容！")
-        
+                messagebox.showinfo("请输入内容！", "请输入内容！")
 
-        with open(abcd,'a') as file_object:
-            file_object.truncate(0)
-            for i in mingdan:
-                if i==mingdan[len(NameList) - 1]:
-                    file_object.write(i)
-                else:
-                    file_object.write(i+',')
-        with open("luckdata.dat","a") as file_object:
-            if a == 0:
+        if a == 0:
+            with open(abcd,'a') as file_object:
                 file_object.truncate(0)
-                file_object.write(abcd)
-                list_namelist.append(abcd)
-            else:
-                file_object.write(",")
-                file_object.write(abcd)
-                list_namelist.append(abcd)
-        messagebox.showinfo('提示','导入已完成！')
-        #os.system("attrib +s +a +h luckydog.txt")
+                for i in mingdan:
+                    if i==mingdan[len(NameList) - 1]:
+                        file_object.write(i)
+                    else:
+                        file_object.write(i+',')
+            with open("luckdata.dat","a") as file_object:
+                if a == 0:
+                    file_object.truncate(0)
+                    file_object.write(abcd)
+                    list_namelist.append(abcd)
+                else:
+                    file_object.write(",")
+                    file_object.write(abcd)
+                    list_namelist.append(abcd)
+            messagebox.showinfo('提示','导入已完成！')
+            os.system("attrib +s +a +h luckydog.txt")
+        root5 = Toplevel(Main)
+        # # 标签
+        tk.Label(root5, text="请输入内容：").pack(pady=5)
+        # 创建输入框
+        entry = tk.Entry(root5, width=30, font=("Arial", 12), bg="#f0f0f0")
+        entry.pack(pady=10)
+        tk.Button(root5, text="提交", command=show_input, bg="#4CAF50", fg="white").pack()
 
 def student_out():
     with open("studentslist.txt","w") as file:
         for i in NameList:
             file.write(i + "\n")
-        messagebox.showinfo("提示", "已导出到桌面")
+    #os.command()
+    messagebox.showinfo("提示", "已导出到桌面")
 
 def namelist_check():
     win = Toplevel()
@@ -374,24 +375,18 @@ def on_minisize(evnet):
 try:
     with open('luckdata.dat','r') as file_object:
          luckdata = file_object.readlines()
-         print(luckdata)
          for i in luckdata:
              list_namelist.append(i)
-             print(list_namelist)
          namelist = list_namelist[0]
-         print(namelist)# 字符串
          result = namelist.split(",")
-         print(result)
          try:
-            with open(result[0],"r") as file_object:# 此处0为选用名单序号
+            with open(result[0],"r") as file_object:
+                # 此处result为选用名单序号
                 localnamelist = file_object.readlines()
-                print(localnamelist)
                 result = localnamelist[0]
                 result = result.split(",")
-                print(result)
                 NameList = result
          except Exception as e:
-             print(e)
              messagebox.showinfo("错误","名单文件出错，请尝试重新导入名单")
              import_students(0)
 except:
@@ -400,39 +395,40 @@ except:
         import_students(0)
         os.system("attrib +h luckdata.dat")
 
-
-Main = Tk()
-Main.iconbitmap("幸运方块.ico")
-Main.title('抽奖程序v10.20最新版')  # print窗体标题
-Main.bind("<Unmap>", on_minisize)
-screenwidth = Main.winfo_screenwidth()
-screenheight = Main.winfo_screenheight()
-geometry = '%dx%d+%d+%d' % (400,495, (screenwidth - 400) / 2, (screenheight - 495) / 2)
-Main.geometry(geometry)  # 窗体初始生成大小、位置
-Main.resizable(False, False)  # 设置窗体大小可更改参数（宽，高）
-top_menu = Menu(Main)
-menu1 = Menu(top_menu, tearoff=False)
-top_menu.add_cascade(label="软件功能", menu=menu1)
-top_menu.add_command(label="关于我们", command=about_us)
-top_menu.add_command(label="抽取重置", command=reset)
-Main.config(menu=top_menu)
-menu1.add_command(label='定向抽取', command=focus_name)
-menu1.add_command(label='范围抽取', command=names)
-menu1.add_command(label='名单导出', command=student_out)
-#menu1.add_command(label='名单管理', command=file)
-menu1.add_command(label="名单检查", command=namelist_check)
-menu1.add_command(label='名单更改', command=lambda:import_students(1))
-box1 = Frame(Main)
-box1.pack()
-txt = Label(box1, text='今天的LuckyDog是：', font='微软雅黑 25 bold')
-txt.pack()
-start = Button(
-    box1, text='抽一个', bg='#43d2f9', width=20, height=1, anchor='center', font='等线 25', command=lambda:
-    a())
-start.pack()
-update = Button(box1, text='归零', bg='#43d2f9', width=20, height=1, anchor='center', font='等线 25', command=b)
-update.pack()
-Main.attributes("-topmost", True)
-Main.quit()
-print(list_namelist)
-Main.mainloop()
+if __name__ == "__main__":
+    Main = Tk()
+    Main.iconbitmap("幸运方块.ico")
+    Main.title('抽奖程序v10.20最新版')  # print窗体标题
+    Main.bind("<Unmap>", on_minisize)
+    screenwidth = Main.winfo_screenwidth()
+    screenheight = Main.winfo_screenheight()
+    geometry = '%dx%d+%d+%d' % (400,495, (screenwidth - 400) / 2, (screenheight - 495) / 2)
+    Main.geometry(geometry)  # 窗体初始生成大小、位置
+    Main.resizable(False, False)  # 设置窗体大小可更改参数（宽，高）
+    top_menu = Menu(Main)
+    menu1 = Menu(top_menu, tearoff=False)
+    top_menu.add_cascade(label="软件功能", menu=menu1)
+    top_menu.add_command(label="关于我们", command=about_us)
+    top_menu.add_command(label="抽取重置", command=reset)
+    Main.config(menu=top_menu)
+    menu1.add_command(label='定向抽取', command=focus_name)
+    menu1.add_command(label='范围抽取', command=names)
+    menu1.add_command(label='名单导出', command=student_out)
+    #menu1.add_command(label='名单管理', command=file)
+    menu1.add_command(label="名单检查", command=namelist_check)
+    menu1.add_command(label='名单更改', command=lambda:import_students(1))
+    box1 = Frame(Main)
+    box1.pack()
+    txt = Label(box1, text='今天的LuckyDog是：', font='微软雅黑 25 bold')
+    txt.pack()
+    start = Button(
+        box1, text='抽一个', bg='#43d2f9', width=20, height=1, anchor='center', font='等线 25', command=lambda:
+        a())
+    start.pack()
+    update = Button(box1, text='归零', bg='#43d2f9', width=20, height=1, anchor='center', font='等线 25', command=b)
+    update.pack()
+    Main.attributes("-topmost", True)
+    Main.quit()
+    print(list_namelist)
+    print(NameList)
+    Main.mainloop()
