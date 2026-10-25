@@ -224,8 +224,7 @@ def import_students(a):#导入名单
         entry = tk.Entry(root5, width=30, font=("Arial", 12), bg="#f0f0f0")
         entry.pack(pady=10)
         tk.Button(root5, text="提交", command=show_input, bg="#4CAF50", fg="white").pack()
-
-
+        #以下为第一次导入
         if 0 == a:
             with open(abcd,'a') as file_object:
                 file_object.truncate(0)
@@ -375,21 +374,22 @@ def on_minisize(evnet):
         float_win.bind("<Enter>", on_enter)
 
 try:
-    with open('luckdata.dat','r') as file_object:
-         luckdata = file_object.readlines()
+    with open('luckdata.dat','r') as file_object1:
+         luckdata = file_object1.readlines()
          for i in luckdata:
              list_namelist.append(i)
          namelist = list_namelist[0]
          result = namelist.split(",")
          try:
-            with open(result[0],"r") as file_object:
+            with open(result[0],"r") as file_object2:
                 # 此处result为选用名单序号
-                localnamelist = file_object.readlines()
+                localnamelist = file_object2.readlines()
                 result = localnamelist[0]
                 result = result.split(",")
                 NameList = result
          except Exception as e:
              messagebox.showinfo("错误","名单文件出错，请尝试重新导入名单")
+             #file_object1.close()
              import_students(0)
 except:
     with open('luckdata.dat','w') as file_object:
@@ -412,9 +412,9 @@ if __name__ == "__main__":
     top_menu.add_cascade(label="软件功能", menu=menu1)
     top_menu.add_command(label="关于我们", command=about_us)
     top_menu.add_command(label="抽取重置", command=reset)
+    top_menu.add_command(label='范围抽取', command=names)
     Main.config(menu=top_menu)
     menu1.add_command(label='定向抽取', command=focus_name)
-    menu1.add_command(label='范围抽取', command=names)
     menu1.add_command(label='名单导出', command=student_out)
     #menu1.add_command(label='名单管理', command=file)
     menu1.add_command(label="名单检查", command=namelist_check)
