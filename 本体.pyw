@@ -191,39 +191,6 @@ def import_students(a):#导入名单
         messagebox.showerror('警告','导入失败')
     else:
         NameList = mingdan
-        def show_input():
-            global abcd
-            text = entry.get()
-            if text or text in list_namelist:
-                abcd = text
-                with open(abcd, 'a') as file_object:
-                    file_object.truncate(0)
-                    for i in mingdan:
-                        if i == mingdan[len(NameList) - 1]:
-                            file_object.write(i)
-                        else:
-                            file_object.write(i + ',')
-                with open("luckdata.dat", "a") as file_object:
-                    if 0 == a:
-                        file_object.truncate(0)
-                        file_object.write(abcd)
-                        list_namelist.append(abcd)
-                    else:
-                        file_object.write(",")
-                        file_object.write(abcd)
-                        list_namelist.append(abcd)
-                messagebox.showinfo('提示', '导入已完成！\n 已切换至新导入的名单')
-                # os.system("attrib +h luckydog.txt")
-                root5.destroy()
-            else:
-                messagebox.showinfo("请输入内容！", "请输入内容！")
-        root5 = Toplevel(Main)
-        # # 标签
-        tk.Label(root5, text="请输入内容：").pack(pady=5)
-        # 创建输入框
-        entry = tk.Entry(root5, width=30, font=("Arial", 12), bg="#f0f0f0")
-        entry.pack(pady=10)
-        tk.Button(root5, text="提交", command=show_input, bg="#4CAF50", fg="white").pack()
         #以下为第一次导入
         if 0 == a:
             with open(abcd,'a') as file_object:
@@ -244,10 +211,45 @@ def import_students(a):#导入名单
                     list_namelist.append(abcd)
             messagebox.showinfo('提示','导入已完成！')
             os.system("attrib +s +a +h luckydog.txt")
+        else:
+            def show_input():
+                global abcd
+                text = entry.get()
+                if text or text in list_namelist:
+                    abcd = text
+                    with open(abcd, 'a') as file_object:
+                        file_object.truncate(0)
+                        for i in mingdan:
+                            if i == mingdan[len(NameList) - 1]:
+                                file_object.write(i)
+                            else:
+                                file_object.write(i + ',')
+                    with open("luckdata.dat", "a") as file_object:
+                        if 0 == a:
+                            file_object.truncate(0)
+                            file_object.write(abcd)
+                            list_namelist.append(abcd)
+                        else:
+                            file_object.write(",")
+                            file_object.write(abcd)
+                            list_namelist.append(abcd)
+                    messagebox.showinfo('提示', '导入已完成！\n 已切换至新导入的名单')
+                    # os.system("attrib +h luckydog.txt")
+                    root5.destroy()
+                else:
+                    messagebox.showinfo("请输入内容！", "请输入内容！")
+            root5 = Toplevel(Main)
+            # # 标签
+            tk.Label(root5, text="请输入内容：").pack(pady=5)
+            # 创建输入框
+            entry = tk.Entry(root5, width=30, font=("Arial", 12), bg="#f0f0f0")
+            entry.pack(pady=10)
+            tk.Button(root5, text="提交", command=show_input, bg="#4CAF50", fg="white").pack()
 
 
 def student_out():
-    with open("studentslist.txt","w") as file:
+    listpath = os.environ["USERPROFILE"] + r"\Desktop" + r"\studentslist.txt"
+    with open(listpath,"w") as file:
         for i in NameList:
             file.write(i + "\n")
     #os.command()
@@ -320,6 +322,7 @@ def reset():
     dxcq_ky = False
     messagebox.showinfo('提示','     已重置!    ')
 
+
 def on_minisize(evnet):
     def start_drag(event):
         global drag_x,drag_y
@@ -372,6 +375,7 @@ def on_minisize(evnet):
         float_win.bind("<Double-1>", restore_main_window)
         #float_win.bind("<ButtonRelease-1>", on_release)
         float_win.bind("<Enter>", on_enter)
+
 
 try:
     with open('luckdata.dat','r') as file_object1:
