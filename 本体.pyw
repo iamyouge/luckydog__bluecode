@@ -9,7 +9,7 @@ try:
     import chardet
 except:
     print("NOCHARDET")
-import os
+import os,sys
 
 '''
 NameList = ['彭祖海', '陈春日','覃贤', '许云飞', '黄允','张逸', '关雨萱', '吴梓馨', '张诚', '张声冠', '刘子涵', '钟可馨', '吴金明', '莫盟君', '周冠颖', '刘钦梅', '杨怡宁', '章宝峰', '李颢光', '张丽蕊', '覃晓杨', '黄德晟',
@@ -396,6 +396,11 @@ try:
              #file_object1.close()
              import_students(0)
 except:
+    try:
+        os.remove("luckdata.dat")
+    except:
+        pass
+    #应对权限问题的下下之策
     with open('luckdata.dat','w') as file_object:
         messagebox.showinfo('提示','     快点去导入新名单    ')
         import_students(0)
